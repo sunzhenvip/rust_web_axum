@@ -19,6 +19,7 @@ async fn main() {
         .unwrap();
 }
 
+// body位置不能互换 body 只能放到参数最后一个位置
 async fn data_fn(method: Method, headers: HeaderMap, body: String) -> String {
     // 获取请求信息
     let request_info = format!("{:?} {:?} {:?}", method, headers, body);
