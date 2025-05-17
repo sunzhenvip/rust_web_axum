@@ -32,7 +32,8 @@ where
 {
     type Rejection = (Response); // 返回一个错误的响应信息
 
-    async fn from_request(req: Request<B>, state: &S) -> Result<Self, Self::Rejection> {
+    // 占时用不到 _state 这个变量 可以先不管他
+    async fn from_request(req: Request<B>, _state: &S) -> Result<Self, Self::Rejection> {
         todo!()
     }
 }
