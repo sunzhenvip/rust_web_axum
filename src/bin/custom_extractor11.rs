@@ -56,6 +56,7 @@ async fn main() {
 }
 
 async fn hello_user(u: User) -> String {
+    // 如果自己实现了 FromRequest  参数可以直接写 u: User 类似这样的
     // 获取请求信息
     dbg!(u.name, u.age, u.address);
     format!(
