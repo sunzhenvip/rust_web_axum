@@ -20,7 +20,7 @@ async fn main() {
         .unwrap();
 }
 
-async fn movie(query: Query<HashMap<String, String>>) -> String {
+async fn movie(Query(query): Query<HashMap<String, String>>) -> String {
     // dbg!(query);
     dbg!(query.get("a"));
     "move success".to_string()
