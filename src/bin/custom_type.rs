@@ -15,7 +15,7 @@ use std::fmt::Write;
 struct User {
     name: String,
     age: u8,
-    address: String,
+    address: Option<String>, // 增加了 Option 提交的数据 可以没有这个字段
 }
 
 #[tokio::main]
