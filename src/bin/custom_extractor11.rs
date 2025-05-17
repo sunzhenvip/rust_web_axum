@@ -19,7 +19,7 @@ use std::fmt::Write;
 struct User {
     name: String,
     age: u8,
-    address: String,
+    address: Option<String>,
 }
 
 #[async_trait]
@@ -30,7 +30,7 @@ where
     B::Error: Into<BoxError>,
     S: Send + Sync,
 {
-    type Rejection = (Response); // 返回一个错误的响应信息
+    type Rejection = Response; // 返回一个错误的响应信息
 
     // 占时用不到 _state 这个变量 可以先不管他
     async fn from_request(req: Request<B>, _state: &S) -> Result<Self, Self::Rejection> {
@@ -42,6 +42,31 @@ where
     }
 }
 
-fn main() {
-    println!("Starting server on port 8080");
+#[tokio::main]
+async fn main() {
+    let app = Router::new().route("/hello_user", post(hello_user));
+
+    // sleep(tokio::time::Duration::from_secs(5)).await;
+    let host = "0.0.0.0:8082";
+    // 绑定端口 启动服务
+    axum::Server::bind(&host.parse().unwrap())
+        .serve(app.into_make_service())
+        .await
+        .unwrap();
+}
+
+async fn hello_user(u: User) -> String {
+    // 获取请求信息
+    dbg!(u.name, u.age, u.address);
+    format!(
+        "打印时间 {} 执行的函数 {}",
+        get_current_time(),
+        "hello_user".to_string()
+    )
+}
+
+fn get_current_time() -> String {
+    let mut buf = String::with_capacity(19); // 预分配空间
+    write!(&mut buf, "{}", Local::now().format("%Y-%m-%d %H:%M:%S")).unwrap();
+    buf
 }
