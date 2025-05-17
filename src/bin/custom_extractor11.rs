@@ -34,7 +34,11 @@ where
 
     // 占时用不到 _state 这个变量 可以先不管他
     async fn from_request(req: Request<B>, _state: &S) -> Result<Self, Self::Rejection> {
-        todo!()
+        let Json(payload) = req
+            .extract::<Json<User>, _>()
+            .await
+            .map_err(|err| err.into_response())?;
+        Ok(payload)
     }
 }
 
