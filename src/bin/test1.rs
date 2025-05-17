@@ -9,7 +9,9 @@ async fn main() {
     // 网页请求访问 http://localhost:3000/home
     let app:Router = Router::new().route("/home", get(|| async { "Hello, world!" }));
 
-    axum::Server::bind(&"0.0.0.0:3000".parse().unwrap())
+    let host = "0.0.0.0:3000";
+
+    axum::Server::bind(&host.parse().unwrap())
         .serve(app.into_make_service())
         .await
         .unwrap();
