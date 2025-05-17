@@ -30,7 +30,7 @@ where
     B::Error: Into<BoxError>,
     S: Send + Sync,
 {
-    type Rejection = (Response);
+    type Rejection = (Response); // 返回一个错误的响应信息
 
     async fn from_request(req: Request<B>, state: &S) -> Result<Self, Self::Rejection> {
         todo!()
