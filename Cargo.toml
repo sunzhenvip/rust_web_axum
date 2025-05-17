@@ -3,6 +3,12 @@ name = "rust_web_axum"
 version = "0.1.0"
 edition = "2024"
 
+
+#[[bin]]
+#name = "test2"
+#path = "src/.rs"
+
+
 [dependencies]
 anyhow = "1.0.75"
 axum = { version = "0.6.20", features = ["headers"] }
