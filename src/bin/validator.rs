@@ -58,7 +58,11 @@ async fn hello_user(Json(data): Json<User>) -> String {
     // 获取请求信息
     dbg!(&data.name, data.age, &data.email, &data.address);
     if let Err(e) = data.validate() {
-        return format!("msg validation error:\n{}", e); // 注意可能会返回多个
+        return if e.field_errors().iter().len() > 1 {
+            format!("msg validation error:\n{}", e) // 注意可能会返回多个
+        } else {
+            format!("msg validation error:{}", e)
+        }
     }
     format!(
         "打印时间 {} 执行的函数 {}",
