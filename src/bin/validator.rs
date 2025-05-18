@@ -26,7 +26,7 @@ struct User {
         message = "请输入正确范围 age length must be between 1 and 6"
     ))]
     age: u8,
-    #[validate(email)] // 验证邮箱
+    #[validate(email(message = "邮箱格式不正确"))] // 验证邮箱
     email: String,
     #[serde(rename = "my_address")] // 重命名
     address: Option<String>,
