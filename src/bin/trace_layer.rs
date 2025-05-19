@@ -3,9 +3,11 @@
 #![allow(unused_variables)] // 消除 未使用的变量/参数
 
 use axum::{Router};
+use axum::http::{HeaderMap, HeaderValue, Method};
 use axum::routing::{get, post};
 // 中间件依赖包
 use tower_http::trace::TraceLayer;
+use tower_http::cors::{ CorsLayer};
 
 
 
@@ -17,6 +19,11 @@ async fn main() {
     }
     // 初始化 日志  日志输出到屏幕上
     tracing_subscriber::fmt::init();
+
+    let cors = CorsLayer::new()
+        .allow_methods([Method::GET])
+        .allow_origin("http://0.0.0.0:3000".parse::<HeaderValue>().unwrap());
+
 
     let app = Router::new().route("/hello_response", get(hello_response)).
         route("/hello_tower",get(hello_tower))
