@@ -2,6 +2,7 @@
 // use crypto::md5::Md5;
 use md5::{Md5, Digest};
 
+// 比较老旧 新版rust不支持 换成了 md5库
 // pub fn md5(value: &str, salt: &str) -> String {
 //     let mut hash = Md5::new();
 //     let str = format!("{}{}", value, salt);
