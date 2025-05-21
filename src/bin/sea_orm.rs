@@ -20,8 +20,10 @@ async fn run() -> Result<DbConn, DbErr> {
 #[tokio::main]
 async fn main() {
     if let Ok(db) = run().await {
-        let res = add_user(&db).await;
-        println!("{:?}", res);
+        // let res = add_user(&db).await;
+        // println!("add_user {:?}", res);
+        let res = find(&db).await;
+        println!("find {:?}", res);
         println!("链接成功")
     } else {
         println!("链接失败")
@@ -39,5 +41,11 @@ async fn add_user(db: &DbConn) -> Result<(), DbErr> {
     };
     let res = user.insert(db).await?;
     println!("{:?}", res);
+    Ok(())
+}
+
+async fn find(db: &DbConn) -> Result<(), DbErr> {
+    let user = wb_user::Entity::find_by_id(3u32).one(db).await?;
+    dbg!(user.unwrap());
     Ok(())
 }
