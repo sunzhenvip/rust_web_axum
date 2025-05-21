@@ -16,7 +16,7 @@ use tracing_subscriber::{EnvFilter};
 
 // 后面加的
 use tracing_subscriber::fmt::time::FormatTime;
-use std::fmt::{self, Write};
+// use std::fmt::{self, Write};
 use tracing_subscriber::fmt::format::Writer;
 
 // const DATABASE_URL: &str = "mysql://root:root@localhost:3306/seaorm";
@@ -31,7 +31,7 @@ async fn run() -> Result<DbConn, DbErr> {
 struct LocalTime;
 
 impl FormatTime for LocalTime {
-    fn format_time(&self, w: &mut Writer<'_>) -> fmt::Result {
+    fn format_time(&self, w: &mut Writer<'_>) -> std::fmt::Result {
         write!(w, "{}", Local::now().format("%Y-%m-%d %H:%M:%S"))
     }
     // fn format_time(&self, w: &mut fmt::Writer<'_>) -> fmt::Result {
