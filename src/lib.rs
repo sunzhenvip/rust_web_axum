@@ -11,6 +11,8 @@ pub mod model;
 pub mod router;
 pub mod service;
 pub mod utils;
+// 测试使用的
+pub mod test;
 
 pub async fn run() {
     //初始化
