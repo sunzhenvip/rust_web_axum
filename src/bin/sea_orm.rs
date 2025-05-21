@@ -12,15 +12,15 @@ use sea_orm::{
 };
 use sea_orm::{DbBackend, EntityTrait, Statement};
 use serde::{Deserialize, Serialize};
-use tracing_subscriber::{EnvFilter};
+use tracing_subscriber::EnvFilter;
 
 // 后面加的
 use tracing_subscriber::fmt::time::FormatTime;
 // use std::fmt::{self, Write};
 use tracing_subscriber::fmt::format::Writer;
 
-// const DATABASE_URL: &str = "mysql://root:root@localhost:3306/seaorm";
-const DATABASE_URL: &str = "mysql://root:UUff98Y97hj@v@192.168.2.226:42730/test1";
+const DATABASE_URL: &str = "mysql://root:root@localhost:3306/seaorm";
+// const DATABASE_URL: &str = "mysql://root:UUff98Y97hj@v@192.168.2.226:42730/test1";
 
 async fn run() -> Result<DbConn, DbErr> {
     let db = Database::connect(DATABASE_URL).await?;
@@ -34,9 +34,6 @@ impl FormatTime for LocalTime {
     fn format_time(&self, w: &mut Writer<'_>) -> std::fmt::Result {
         write!(w, "{}", Local::now().format("%Y-%m-%d %H:%M:%S"))
     }
-    // fn format_time(&self, w: &mut fmt::Writer<'_>) -> fmt::Result {
-    //     write!(w, "{}", Local::now().format("%Y-%m-%d %H:%M:%S"))
-    // }
 }
 
 #[tokio::main]
@@ -54,7 +51,7 @@ async fn main() {
         )
         .init();
     if let Ok(db) = run().await {
-        // let res = add_user(&db).await;
+        let res = add_user(&db).await;
         // println!("add_user {:?}", res);
         // 根据id查询一条数据
         // let res = find(&db).await;
@@ -69,14 +66,12 @@ async fn main() {
         // let res = delete(&db).await;
         // println!("find {:?}", res);
         // let _ = find_all_sql(&db).await;
-        let _ = find_where(&db).await;
+        // let _ = find_where(&db).await;
         println!("链接成功")
     } else {
         println!("链接失败")
     }
 }
-
-
 
 // 新增数据到数据库
 async fn add_user(db: &DbConn) -> Result<(), DbErr> {
@@ -87,8 +82,11 @@ async fn add_user(db: &DbConn) -> Result<(), DbErr> {
         created_time: Set(Local::now().timestamp() as u32),
         updated_time: Set(Local::now().timestamp() as u32),
     };
-    let res = user.insert(db).await?;
-    println!("{:?}", res);
+    // let res = user.insert(db).await?; 这个语句会执行查询操作
+    // println!("{:?}", res);
+    // 这个语句只返回主键id
+    let res = wb_user::Entity::insert(user).exec(db).await?;
+    println!("插入成功, 插入的主键是: {:?}", res.last_insert_id);
     Ok(())
 }
 
@@ -144,7 +142,7 @@ async fn find_where(db: &DbConn) -> Result<(), DbErr> {
     let users = wb_user::Entity::find()
         .filter(
             Condition::all()
-                .add(wb_user::Column::Uid.eq(7))
+                .add(wb_user::Column::Uid.eq(1))
                 .add(wb_user::Column::Phone.like("%153%")),
         )
         .order_by_asc(wb_user::Column::Uid)
