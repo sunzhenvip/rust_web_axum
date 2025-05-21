@@ -6,8 +6,18 @@
 use axum_weibo::entities::wb_user; // 可以这么写引入路径
 use chrono::Local;
 use sea_orm::ActiveValue::Set;
-use sea_orm::{ActiveModelTrait, Database, DbConn, DbErr, NotSet};
+use sea_orm::{
+    ActiveModelTrait, ColumnTrait, Condition, Database, DbConn, DbErr, NotSet, QueryFilter,
+    QueryOrder,
+};
 use sea_orm::{DbBackend, EntityTrait, Statement};
+use serde::{Deserialize, Serialize};
+use tracing_subscriber::{EnvFilter};
+
+// 后面加的
+use tracing_subscriber::fmt::time::FormatTime;
+use std::fmt::{self, Write};
+use tracing_subscriber::fmt::format::Writer;
 
 // const DATABASE_URL: &str = "mysql://root:root@localhost:3306/seaorm";
 const DATABASE_URL: &str = "mysql://root:UUff98Y97hj@v@192.168.2.226:42730/test1";
@@ -17,8 +27,32 @@ async fn run() -> Result<DbConn, DbErr> {
     Ok(db)
 }
 
+// 自定义时间格式
+struct LocalTime;
+
+impl FormatTime for LocalTime {
+    fn format_time(&self, w: &mut Writer<'_>) -> fmt::Result {
+        write!(w, "{}", Local::now().format("%Y-%m-%d %H:%M:%S"))
+    }
+    // fn format_time(&self, w: &mut fmt::Writer<'_>) -> fmt::Result {
+    //     write!(w, "{}", Local::now().format("%Y-%m-%d %H:%M:%S"))
+    // }
+}
+
 #[tokio::main]
 async fn main() {
+    // 开启打印日志
+    // tracing_subscriber::fmt()
+    //     .with_max_level(tracing::Level::DEBUG)
+    //     .with_test_writer()
+    //     .init();
+    // 开启sql打印日志 可以设置更精细
+    tracing_subscriber::fmt()
+        .with_timer(LocalTime)
+        .with_env_filter(
+            EnvFilter::new("sea_orm=debug,sqlx=warn"), // 设置 sea_orm 为 debug，sqlx 为 warn
+        )
+        .init();
     if let Ok(db) = run().await {
         // let res = add_user(&db).await;
         // println!("add_user {:?}", res);
@@ -34,12 +68,15 @@ async fn main() {
         // 删除数据
         // let res = delete(&db).await;
         // println!("find {:?}", res);
-        let _ = find_all_sql(&db).await;
+        // let _ = find_all_sql(&db).await;
+        let _ = find_where(&db).await;
         println!("链接成功")
     } else {
         println!("链接失败")
     }
 }
+
+
 
 // 新增数据到数据库
 async fn add_user(db: &DbConn) -> Result<(), DbErr> {
@@ -97,6 +134,20 @@ async fn find_all_sql(db: &DbConn) -> Result<(), DbErr> {
             r#"select * from wb_user where uid = ?"#,
             [5.into()],
         ))
+        .all(db)
+        .await?;
+    dbg!(users);
+    Ok(())
+}
+
+async fn find_where(db: &DbConn) -> Result<(), DbErr> {
+    let users = wb_user::Entity::find()
+        .filter(
+            Condition::all()
+                .add(wb_user::Column::Uid.eq(7))
+                .add(wb_user::Column::Phone.like("%153%")),
+        )
+        .order_by_asc(wb_user::Column::Uid)
         .all(db)
         .await?;
     dbg!(users);
