@@ -9,3 +9,8 @@ pub mod wb_like;
 pub mod wb_post;
 pub mod wb_user;
 pub mod wb_user_info;
+
+// 只在 Debug 模式（非 release 模式）下编译该模块（或函数、代码块）。
+// #[cfg(debug_assertions)]
+#[cfg(test)]
+pub mod wb_user_expanded;
