@@ -29,7 +29,10 @@ async fn main() {
         // let res = find_all(&db).await;
         // println!("find {:?}", res);
         // 更新数据
-        let res = update(&db).await;
+        // let res = update(&db).await;
+        // println!("find {:?}", res);
+        // 删除数据
+        let res = delete(&db).await;
         println!("find {:?}", res);
         println!("链接成功")
     } else {
@@ -72,6 +75,16 @@ async fn update(db: &DbConn) -> Result<(), DbErr> {
         updated_time: Set(Local::now().timestamp() as u32),
     };
     let res = user.update(db).await?;
+    println!("{:?}", res);
+    Ok(())
+}
+
+async fn delete(db: &DbConn) -> Result<(), DbErr> {
+    let user = wb_user::ActiveModel {
+        uid: Set(4),
+        ..Default::default()
+    };
+    let res = user.delete(db).await?;
     println!("{:?}", res);
     Ok(())
 }
