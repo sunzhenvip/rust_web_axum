@@ -7,6 +7,9 @@ edition = "2021"
 name = "weibo"
 path = "src/main.rs"
 
+#[[bin]]
+#name = "sea_orm"
+#path = "src/bin/sea_orm.rs"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
