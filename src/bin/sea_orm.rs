@@ -26,7 +26,10 @@ async fn main() {
         // let res = find(&db).await;
         // println!("find {:?}", res);
         // 查询全部数据
-        let res = find_all(&db).await;
+        // let res = find_all(&db).await;
+        // println!("find {:?}", res);
+        // 更新数据
+        let res = update(&db).await;
         println!("find {:?}", res);
         println!("链接成功")
     } else {
@@ -54,9 +57,21 @@ async fn find(db: &DbConn) -> Result<(), DbErr> {
     Ok(())
 }
 
-
 async fn find_all(db: &DbConn) -> Result<(), DbErr> {
     let users = wb_user::Entity::find().all(db).await?;
     dbg!(users);
+    Ok(())
+}
+
+async fn update(db: &DbConn) -> Result<(), DbErr> {
+    let user = wb_user::ActiveModel {
+        uid: Set(3),
+        phone: Set("12333".to_string()),
+        password: Set("88888".to_string()),
+        created_time: Set(Local::now().timestamp() as u32),
+        updated_time: Set(Local::now().timestamp() as u32),
+    };
+    let res = user.update(db).await?;
+    println!("{:?}", res);
     Ok(())
 }
