@@ -22,7 +22,11 @@ async fn main() {
     if let Ok(db) = run().await {
         // let res = add_user(&db).await;
         // println!("add_user {:?}", res);
-        let res = find(&db).await;
+        // 根据id查询一条数据
+        // let res = find(&db).await;
+        // println!("find {:?}", res);
+        // 查询全部数据
+        let res = find_all(&db).await;
         println!("find {:?}", res);
         println!("链接成功")
     } else {
@@ -47,5 +51,12 @@ async fn add_user(db: &DbConn) -> Result<(), DbErr> {
 async fn find(db: &DbConn) -> Result<(), DbErr> {
     let user = wb_user::Entity::find_by_id(3u32).one(db).await?;
     dbg!(user.unwrap());
+    Ok(())
+}
+
+
+async fn find_all(db: &DbConn) -> Result<(), DbErr> {
+    let users = wb_user::Entity::find().all(db).await?;
+    dbg!(users);
     Ok(())
 }
