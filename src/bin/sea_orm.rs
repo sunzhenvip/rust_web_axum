@@ -6,8 +6,8 @@
 use axum_weibo::entities::wb_user; // 可以这么写引入路径
 use chrono::Local;
 use sea_orm::ActiveValue::Set;
-use sea_orm::EntityTrait;
 use sea_orm::{ActiveModelTrait, Database, DbConn, DbErr, NotSet};
+use sea_orm::{DbBackend, EntityTrait, Statement};
 
 // const DATABASE_URL: &str = "mysql://root:root@localhost:3306/seaorm";
 const DATABASE_URL: &str = "mysql://root:UUff98Y97hj@v@192.168.2.226:42730/test1";
@@ -32,8 +32,9 @@ async fn main() {
         // let res = update(&db).await;
         // println!("find {:?}", res);
         // 删除数据
-        let res = delete(&db).await;
-        println!("find {:?}", res);
+        // let res = delete(&db).await;
+        // println!("find {:?}", res);
+        let _ = find_all_sql(&db).await;
         println!("链接成功")
     } else {
         println!("链接失败")
@@ -86,5 +87,18 @@ async fn delete(db: &DbConn) -> Result<(), DbErr> {
     };
     let res = user.delete(db).await?;
     println!("{:?}", res);
+    Ok(())
+}
+
+async fn find_all_sql(db: &DbConn) -> Result<(), DbErr> {
+    let users = wb_user::Entity::find()
+        .from_raw_sql(Statement::from_sql_and_values(
+            DbBackend::MySql,
+            r#"select * from wb_user where uid = ?"#,
+            [5.into()],
+        ))
+        .all(db)
+        .await?;
+    dbg!(users);
     Ok(())
 }
