@@ -8,7 +8,7 @@ use chrono::Local;
 use sea_orm::ActiveValue::Set;
 use sea_orm::{
     ActiveModelTrait, ColumnTrait, Condition, Database, DbConn, DbErr, NotSet, QueryFilter,
-    QueryOrder,
+    QueryOrder, TransactionTrait,
 };
 use sea_orm::{DbBackend, EntityTrait, Statement};
 use serde::{Deserialize, Serialize};
@@ -51,7 +51,7 @@ async fn main() {
         )
         .init();
     if let Ok(db) = run().await {
-        let res = add_user(&db).await;
+        // let res = add_user(&db).await;
         // println!("add_user {:?}", res);
         // 根据id查询一条数据
         // let res = find(&db).await;
@@ -67,6 +67,8 @@ async fn main() {
         // println!("find {:?}", res);
         // let _ = find_all_sql(&db).await;
         // let _ = find_where(&db).await;
+
+        let _ = transaction_user_update(&db).await;
         println!("链接成功")
     } else {
         println!("链接失败")
@@ -149,5 +151,34 @@ async fn find_where(db: &DbConn) -> Result<(), DbErr> {
         .all(db)
         .await?;
     dbg!(users);
+    Ok(())
+}
+
+// 事务sql
+async fn transaction_user_update(db: &DbConn) -> Result<(), DbErr> {
+    let txn = db.begin().await?;
+    // 更新第一个
+    wb_user::ActiveModel {
+        uid: Set(1),
+        phone: Set("2222".to_string()),
+        password: Set("88888".to_string()),
+        created_time: Set(Local::now().timestamp() as u32),
+        updated_time: Set(Local::now().timestamp() as u32),
+    }
+    .update(&txn)
+    .await?;
+    // 更新第二个
+    wb_user::ActiveModel {
+        uid: Set(2),
+        phone: Set("7777".to_string()),
+        password: Set("88888".to_string()),
+        created_time: Set(Local::now().timestamp() as u32),
+        updated_time: Set(Local::now().timestamp() as u32),
+    }
+    .update(&txn)
+    .await?;
+
+    txn.commit().await?;
+    println!("transaction_user_update 执行成功");
     Ok(())
 }
