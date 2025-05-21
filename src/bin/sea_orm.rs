@@ -68,7 +68,7 @@ async fn main() {
         // let _ = find_all_sql(&db).await;
         // let _ = find_where(&db).await;
 
-        let _ = transaction_user_update(&db).await;
+        // let _ = transaction_user_update(&db).await;
         println!("链接成功")
     } else {
         println!("链接失败")
