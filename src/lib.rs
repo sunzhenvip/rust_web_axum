@@ -1,3 +1,9 @@
+#![allow(unused_imports)]
+#![allow(dead_code)]
+#![allow(unused_variables)]
+#![allow(non_upper_case_globals)]
+// 以上是消除部分编译警告
+
 use crate::config::config_init;
 use crate::model::db_conn_init;
 use crate::router::start_route;
