@@ -3,6 +3,7 @@
 #![allow(unused_variables)] // 消除 未使用的变量/参数
 
 // use crate::entities::users; // 这么写有问题
+// sea-orm-cli generate entity -u mysql://root:123456@v@127.0.0.1:3306/test1
 use axum_weibo::entities::wb_user; // 可以这么写引入路径
 use chrono::Local;
 use sea_orm::ActiveValue::Set;
