@@ -7,8 +7,8 @@ use axum_weibo::entities::wb_user; // 可以这么写引入路径
 use chrono::Local;
 use sea_orm::ActiveValue::Set;
 use sea_orm::{
-    ActiveModelTrait, ColumnTrait, Condition, Database, DbConn, DbErr, NotSet, QueryFilter,
-    QueryOrder, TransactionTrait,
+    ActiveModelTrait, ColumnTrait, Condition, ConnectOptions, Database, DbConn, DbErr, NotSet,
+    QueryFilter, QueryOrder, TransactionTrait,
 };
 use sea_orm::{DbBackend, EntityTrait, Statement};
 use serde::{Deserialize, Serialize};
@@ -23,7 +23,15 @@ const DATABASE_URL: &str = "mysql://root:root@localhost:3306/seaorm";
 // const DATABASE_URL: &str = "mysql://root:UUff98Y97hj@v@192.168.2.226:42730/test1";
 
 async fn run() -> Result<DbConn, DbErr> {
-    let db = Database::connect(DATABASE_URL).await?;
+    // 可选参数模式
+    /*let mut opt = ConnectOptions::new(DATABASE_URL);
+    opt.max_connections(100)
+        .min_connections(5)
+        .connect_timeout(std::time::Duration::from_secs(5)) // 链接尝试超时失败时间
+        .sqlx_logging(false); // 开启 sqlx 日志;
+    let db = Database::connect(opt).await?;*/
+    // 默认链接模式
+    let db = sea_orm::Database::connect(DATABASE_URL).await?;
     Ok(db)
 }
 
