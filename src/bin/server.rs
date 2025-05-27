@@ -5,7 +5,7 @@
 use std::net::SocketAddr;
 use axum_weibo::helloworld::greeter_server::{Greeter, GreeterServer};
 use axum_weibo::helloworld::{HelloReply, HelloRequest};
-use tonic::{Request, Response, Status};
+use tonic::{Code, Request, Response, Status};
 use tonic::transport::Server;
 
 #[derive(Default)]
@@ -18,6 +18,8 @@ impl Greeter for MyGreeter {
         let rsp = HelloReply{
             message: "hello world".to_string(),
         };
+        // 错误返回示例
+        // Err(Status::new(Code::InvalidArgument,"参数错误"))
         Ok(Response::new(rsp))
     }
 }
