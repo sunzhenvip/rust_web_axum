@@ -20,6 +20,8 @@ pub mod utils;
 // 测试使用的
 pub mod test;
 
+pub mod helloworld;
+
 pub async fn run() {
     //初始化
     config_init().await;
