@@ -7,6 +7,7 @@ use axum_weibo::helloworld::greeter_server::{Greeter, GreeterServer};
 use axum_weibo::helloworld::{HelloReply, HelloRequest};
 use tonic::{Code, Request, Response, Status};
 use tonic::transport::Server;
+use tracing::Span;
 
 #[derive(Default)]
 pub struct MyGreeter {}
@@ -14,7 +15,11 @@ pub struct MyGreeter {}
 #[tonic::async_trait]
 impl Greeter for MyGreeter {
     async fn say_hello(&self,request: Request<HelloRequest>) -> Result<Response<HelloReply>, Status> {
-        println!("欢迎使用1server");
+        println!("欢迎调用say_hello");
+
+        let ext = request.extensions().get::<MyExtension>().unwrap();
+        println!("extension data = {:?}", ext.some_piece_of_data);
+
         let rsp = HelloReply{
             message: "hello world".to_string(),
         };
@@ -39,10 +44,30 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let g  = MyGreeter::default();
     // let g = GreeterServer::new(greeter);
 
+   let srv = GreeterServer::with_interceptor(g,interceptor);
+
     Server::builder()
-        .add_service(GreeterServer::new(g))
+        //.add_service(GreeterServer::new(g))
+        .add_service(srv)
         .serve(addr)
         .await?;
 
     Ok(())
+}
+
+
+
+fn interceptor(mut req: Request<()>) -> Result<Request<()>, Status> {
+
+    println!("中间件");
+
+    req.extensions_mut().insert(MyExtension{
+        some_piece_of_data: "foo".to_string(),
+    });
+
+    Ok(req)
+}
+
+struct MyExtension {
+    some_piece_of_data:String,
 }
