@@ -196,6 +196,7 @@ dependencies = [
  "chrono",
  "jsonwebtoken",
  "md-5",
+ "nom",
  "prost",
  "regex",
  "sea-orm",
