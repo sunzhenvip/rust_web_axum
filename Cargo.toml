@@ -43,6 +43,7 @@ tonic-build = "0.11.0"
 #kafka = "0.10.0"
 nom = "7.1.3"
 sentinel-core = "0.1.3"
+rand = "0.8.5"
 
 [build-dependencies]
 tonic-build = "0.11"  # 或者最新版本，具体版本可查 crates.io
